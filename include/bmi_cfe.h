@@ -108,7 +108,7 @@ struct cfe_state_struct {
     double* flux_perc_m;
     double* flux_lat_m;
     double* flux_Qout_m;
-
+    double* flux_EQout_mm;
     int verbosity;
 
 };

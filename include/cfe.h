@@ -197,6 +197,7 @@ extern void cfe(
         struct nash_cascade_parameters *nash_surface_params,
         struct evapotranspiration_structure *evap_struct,
         double *Qout_m_ptr,
+	double *EQout_mm_ptr,
         struct massbal *massbal_struct,
         double time_step_size,
         int surface_runoff_scheme
