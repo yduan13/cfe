@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "cfe.h"
 
 #define max(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b);  _a > _b ? _a : _b; })
@@ -31,6 +32,7 @@ extern void cfe(
         struct nash_cascade_parameters *nash_surface_params,
         struct evapotranspiration_structure *evap_struct,
         double *Qout_m_ptr,
+        double *EQout_mm_ptr,
         struct massbal *massbal_struct,
         double time_step_size,
         int    surface_runoff_scheme
@@ -114,7 +116,16 @@ extern void cfe(
   // LKC: This needs to be calcualted here after et_from_soil since soil_reservoir_struct->storage_m changes
   soil_reservoir_storage_deficit_m=(NWM_soil_params_struct.smcmax*NWM_soil_params_struct.D-soil_reservoir_struct->storage_m);
 
-
+  // Save to CSV file
+  /*FILE *fp = fopen("../cfe_ET2ATM.csv", "a"); // Open in append mode
+  if (fp != NULL) {
+      fprintf(fp, "%8.4lf\n",
+              massbal_struct->vol_et_to_atm);
+      fclose(fp);
+  } else {   
+      fprintf(stderr, "Error opening file for writing.\n");
+  }	 
+  */
   // NEW FLO
   if(0.0 < timestep_rainfall_input_m)
     {
@@ -299,6 +310,78 @@ extern void cfe(
     *direct_runoff_m_ptr                  = direct_runoff_m;
     *nash_lateral_runoff_m_ptr            = nash_lateral_runoff_m;
     *Qout_m_ptr                           = Qout_m;
+
+
+#define MAX_ITER 100
+#define TOL 1e-10
+double ExpET           = evap_struct->actual_et_m_per_timestep*1000.0;
+double Erunon          = timestep_rainfall_input_m*1000.0 - ExpET;
+//double Erunon          = timestep_rainfall_input_m*1000.0;
+double Edischarge_prev = *EQout_mm_ptr;
+
+if (EQout_mm_ptr == NULL) {
+    fprintf(stderr, "EQout_mm_ptr is NULL!\n");
+    return;
+}
+
+// Parameters
+double Ea = 56.7039;
+double Eb = 0.5693;
+
+double fdis(double Edischarge, double Edischarge_prev, double Erunon) {
+    return Ea * Eb * pow(Edischarge, Eb) - Ea * Eb * Edischarge_prev * pow(Edischarge, Eb - 1) + Edischarge - Erunon;
+}
+
+// Derivative f'(Q)
+double df(double Edischarge, double Edischarge_prev) {
+    double term1 = Ea * Eb * Eb * pow(Edischarge, Eb - 1);
+    double term2 = -Ea * Eb * Edischarge_prev * (Eb - 1) * pow(Edischarge, Eb - 2);
+    return term1 + term2 + 1;
+}
+
+// Newton-Raphson Solver
+//void solve_Q(double Edischarge_prev, double Erunon) {
+    double Edischarge = fmax(4, Erunon); // Starting guess
+    //double Edischarge = 4.000;
+    for (int Ei = 0; Ei < MAX_ITER; Ei++) {
+        double f_val  = fdis(Edischarge, Edischarge_prev, Erunon);
+        double df_val = df(Edischarge, Edischarge_prev);
+ 
+        if (fabs(df_val) < 1e-12 || isnan(df_val)) {
+            //printf("Derivative too small or NaN at iteration %d\n", df_val);
+            break;
+        }
+
+        double Edischarge_new = Edischarge - f_val / df_val;
+
+        //if (fabs(Edischarge_new - Edischarge) < TOL) {
+        if (fabs(fdis(Edischarge_new, Edischarge_prev, Erunon)) < TOL) {
+           if (Edischarge < 1e-6) Edischarge = 1e-6;
+           Edischarge = Edischarge_new;
+           break;
+        }
+
+        Edischarge = Edischarge_new;
+
+        // Prevent Q from going negative
+        if (Edischarge < 1e-6) Edischarge = 1e-6;
+    }
+    
+    //printf("Warning: did not converge. Returning Q = %.6f\n", Q);
+    *EQout_mm_ptr = Edischarge;
+
+   // Save to CSV file
+   /* FILE *fpD = fopen("../cfe_Qout_mm_per_timestep.csv", "a"); // Open in append mode
+    if (fpD != NULL) {
+        fprintf(fpD, "%8.4lf\n",
+                Edischarge);
+        fclose(fpD);
+    } else {   
+        fprintf(stderr, "Error opening file for writing.\n");
+    }	
+    */
+//}
+
 
 
 
@@ -698,3 +781,4 @@ extern int is_fabs_less_than_epsilon(double a,double epsilon)  // returns true i
   if(fabs(a)<epsilon) return(TRUE);
   else                return(FALSE);
 }
+

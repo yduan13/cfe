@@ -49,17 +49,66 @@ int
   if (cfe_main_data->verbosity > 0)
       print_cfe_flux_header();
 
-  for (int i = 0; i < 45; i++){
+  for (int i = 0; i < 51840; i++){
 
     cfe_bmi_model->update(cfe_bmi_model);
+    //print_cfe_flux_at_timestep(cfe_main_data);
+    mass_balance_check(cfe_main_data);
 
     if (cfe_main_data->verbosity > 0)
         print_cfe_flux_at_timestep(cfe_main_data);
-
   }
 
+
   // Run the Mass Balance check
-  mass_balance_check(cfe_main_data);
+  mass_balance_check(cfe_main_data); 
+
+void print_cfe_state_struct(struct cfe_state_struct* state) {
+    printf("Size of cfe_state_struct: %zu bytes\n", sizeof(struct cfe_state_struct));
+
+    printf("timestep_rainfall_input_m: %f\n", state->timestep_rainfall_input_m);
+    printf("soil_reservoir_storage_deficit_m: %f\n", state->soil_reservoir_storage_deficit_m);
+    printf("infiltration_depth_m: %f\n", state->infiltration_depth_m);
+    printf("infiltration_excess_m (ptr): %p\n", (void*)state->infiltration_excess_m);
+    printf("gw_reservoir_storage_deficit_m: %f\n", state->gw_reservoir_storage_deficit_m);
+    printf("timestep_h: %f\n", state->timestep_h);
+
+    printf("epoch_start_time: %ld\n", state->epoch_start_time);
+    printf("num_timesteps: %d\n", state->num_timesteps);
+    printf("current_time_step: %d\n", state->current_time_step);
+    printf("time_step_size: %d\n", state->time_step_size);
+    printf("time_step_fraction: %f\n", state->time_step_fraction);
+    printf("is_forcing_from_bmi: %d\n", state->is_forcing_from_bmi);
+    printf("forcing_file (ptr): %p\n", (void*)state->forcing_file);
+
+    printf("K_lf: %f\n", state->K_lf);
+    printf("K_nash_subsurface: %f\n", state->K_nash_subsurface);
+    printf("N_nash_subsurface: %d\n", state->N_nash_subsurface);
+
+    printf("num_giuh_ordinates: %d\n", state->num_giuh_ordinates);
+    printf("surface_runoff_scheme: %d\n", state->surface_runoff_scheme);
+    printf("nwm_ponded_depth_m: %f\n", state->nwm_ponded_depth_m);
+
+    printf("forcing_data_precip_kg_per_m2 (ptr): %p\n", (void*)state->forcing_data_precip_kg_per_m2);
+    printf("forcing_data_time (ptr): %p\n", (void*)state->forcing_data_time);
+
+    printf("giuh_ordinates (ptr): %p\n", (void*)state->giuh_ordinates);
+    printf("nash_storage_subsurface (ptr): %p\n", (void*)state->nash_storage_subsurface);
+    printf("runoff_queue_m_per_timestep (ptr): %p\n", (void*)state->runoff_queue_m_per_timestep);
+
+    printf("flux_direct_runoff_m (ptr): %p\n", (void*)state->flux_direct_runoff_m);
+    printf("flux_nash_lateral_runoff_m (ptr): %p\n", (void*)state->flux_nash_lateral_runoff_m);
+    printf("flux_from_deep_gw_to_chan_m (ptr): %p\n", (void*)state->flux_from_deep_gw_to_chan_m);
+    printf("flux_perc_m (ptr): %p\n", (void*)state->flux_perc_m);
+    printf("flux_lat_m (ptr): %p\n", (void*)state->flux_lat_m);
+    printf("flux_Qout_m (ptr): %p\n", (void*)state->flux_Qout_m);
+
+    printf("verbosity: %d\n", state->verbosity);
+}
+ 
+  //printf("print cfe_state_struct size and variables\n");
+  //print_cfe_state_struct(cfe_main_data);
+  //printf("the end of the print cfe_state_struct\n");
 
   printf("Finalizing CFE model\n");
   cfe_bmi_model->finalize(cfe_bmi_model);
@@ -102,7 +151,7 @@ int
       print_cfe_flux_header();
 
   // Run the model with the update until function
-  cfe_bmi_model2->update_until(cfe_bmi_model2, 45*model_time_step_size);
+  cfe_bmi_model2->update_until(cfe_bmi_model2, 51840*model_time_step_size);
 
   if (cfe_main_data2->verbosity > 0)
       print_cfe_flux_at_timestep(cfe_main_data2);

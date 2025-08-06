@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include <math.h>
 #include "bmi.h"
 #include "cfe.h"
 #include "bmi_cfe.h"
@@ -185,7 +185,7 @@ int
   if (cfe1->verbosity > 0)
     print_cfe_flux_header();
 
-  for (int i = 0; i < 720; i++){
+  for (int i = 0; i < 4343; i++){
 
 
     aorc_bmi_model->update(aorc_bmi_model);                         // Update model 1
@@ -220,9 +220,22 @@ int
   }
 
     cfe_bmi_model->update_until(cfe_bmi_model, (i+1)*model_time_step_size);      // Update model 2
+    mass_balance_check(cfe1);
+    //print_cfe_flux_at_timestep(cfe1);
 
-    if (cfe1->verbosity > 0)
-      print_cfe_flux_at_timestep(cfe1);
+   // Save to CSV file
+   /*FILE *fp = fopen("../cfe_PETmpers.csv", "a"); // Open in append mode
+   if (fp != NULL) {
+       fprintf(fp, "%8.20lf\n",
+               cfe1->et_struct.potential_et_m_per_s);
+       fclose(fp);
+   } else {
+       fprintf(stderr, "Error opening file for writing.\n");
+   }
+   */
+
+    //if (cfe1->verbosity > 0)
+      //print_cfe_flux_at_timestep(cfe1);
 
   }
 

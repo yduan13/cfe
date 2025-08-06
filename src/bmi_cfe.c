@@ -164,23 +164,24 @@ Variable var_info[] = {
 	{ 83, "flux_perc_m",                    "double*", 1 },
 	{ 84, "flux_lat_m",                     "double*", 1 },
 	{ 85, "flux_Qout_m",                    "double*", 1 },
-	{ 86, "verbosity",                      "int",     1 },
+    { 86, "flux_EQout_mm",                   "double*", 1 },
+	{ 87, "verbosity",                      "int",     1 },
 	//---------------------------------------
 	// infiltration_excess_runoff_params_struct vars
 	// xinanjiang or schaake flag [56]
 	//---------------------------------------
-	{ 87, "Schaake_adjusted_magic_constant_by_soil_type",   "double", 1},
-	{ 88, "a_Xinanjiang_inflection_point_parameter",        "double", 1},
-	{ 89, "b_Xinanjiang_shape_parameter",                   "double", 1},
-	{ 90, "x_Xinanjiang_shape_parameter",                   "double", 1},
+	{ 88, "Schaake_adjusted_magic_constant_by_soil_type",   "double", 1},
+	{ 89, "a_Xinanjiang_inflection_point_parameter",        "double", 1},
+	{ 90, "b_Xinanjiang_shape_parameter",                   "double", 1},
+	{ 91, "x_Xinanjiang_shape_parameter",                   "double", 1},
 	//-------------------------------------------
 	// Root zone adjusted AET development -rlm -AJ
 	// -------------------------------------------
-	{ 91, "soil_moisture_profile",                   "double", 1},
-        { 92, "soil_layer_depths_m",			 "double", 1},
-        { 93, "max_rootzone_layer",                      "int", 1},
+	{ 92, "soil_moisture_profile",                   "double", 1},
+        { 93, "soil_layer_depths_m",			 "double", 1},
+        { 94, "max_rootzone_layer",                      "int", 1},
 	//--------------------------------------------
-	{ 94, "nwm_ponded_depth",                        "double", 1},
+	{ 95, "nwm_ponded_depth",                        "double", 1},
 
 };
 
@@ -1382,6 +1383,8 @@ static int Initialize (Bmi *self, const char *file)
     *cfe_bmi_data_ptr->infiltration_excess_m = 0.0;
     cfe_bmi_data_ptr->flux_Qout_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_Qout_m = 0.0;
+    cfe_bmi_data_ptr->flux_EQout_mm = malloc(sizeof(double));
+    *cfe_bmi_data_ptr->flux_EQout_mm = 0.018207;
     cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = 0.0;
     cfe_bmi_data_ptr->flux_direct_runoff_m = malloc(sizeof(double));
@@ -1635,6 +1638,8 @@ static int Finalize (Bmi *self)
             free(model->runoff_queue_m_per_timestep);
         if( model->flux_Qout_m != NULL )
             free(model->flux_Qout_m);
+        if( model->flux_EQout_mm != NULL )
+            free(model->flux_EQout_mm);
 
         /* xinanjiang_dev: changing name to the more general "direct runoff"
         if( model->flux_Schaake_output_runoff_m != NULL )
@@ -2026,6 +2031,11 @@ static int Get_value_ptr (Bmi *self, const char *name, void **dest)
 
     if (strcmp (name, "Q_OUT") == 0) {
         *dest = ((cfe_state_struct *)(self->data))->flux_Qout_m;
+        return BMI_SUCCESS;
+    }
+
+    if (strcmp (name, "EQ_OUT") == 0) {
+        *dest = ((cfe_state_struct *)(self->data))->flux_EQout_mm;
         return BMI_SUCCESS;
     }
 
@@ -2531,20 +2541,21 @@ static int Get_state_var_ptrs (Bmi *self, void *ptr_list[])
     ptr_list[82] = state->flux_perc_m;
     ptr_list[83] = state->flux_lat_m;
     ptr_list[84] = state->flux_Qout_m;
-    ptr_list[85] = &(state->verbosity);
+    ptr_list[85] = state->flux_EQout_mm;
+    ptr_list[86] = &(state->verbosity);
     //---------------------------------------
     // infiltration_excess_params_struct vars
     // xinanjiang or schaake flag [56]
     //---------------------------------------
-    ptr_list[86] = &(state->infiltration_excess_params_struct.Schaake_adjusted_magic_constant_by_soil_type );
-    ptr_list[87] = &(state->infiltration_excess_params_struct.a_Xinanjiang_inflection_point_parameter );
-    ptr_list[88] = &(state->infiltration_excess_params_struct.b_Xinanjiang_shape_parameter );
-    ptr_list[89] = &(state->infiltration_excess_params_struct.x_Xinanjiang_shape_parameter );
+    ptr_list[87] = &(state->infiltration_excess_params_struct.Schaake_adjusted_magic_constant_by_soil_type );
+    ptr_list[88] = &(state->infiltration_excess_params_struct.a_Xinanjiang_inflection_point_parameter );
+    ptr_list[89] = &(state->infiltration_excess_params_struct.b_Xinanjiang_shape_parameter );
+    ptr_list[90] = &(state->infiltration_excess_params_struct.x_Xinanjiang_shape_parameter );
     //-------------------------------------------------------------
     // Root zone AET development -rlm
     // ------------------------------------------------------------
-    ptr_list[90] = &(state->soil_reservoir.soil_layer_depths_m);
-    ptr_list[91] = &(state->soil_reservoir.max_rootzone_layer);
+    ptr_list[91] = &(state->soil_reservoir.soil_layer_depths_m);
+    ptr_list[92] = &(state->soil_reservoir.max_rootzone_layer);
     //-------------------------------------------------------------
 
 
@@ -3032,6 +3043,7 @@ cfe_state_struct *new_bmi_cfe(void)
     data->nash_storage_subsurface       = NULL;
     data->runoff_queue_m_per_timestep   = NULL;
     data->flux_Qout_m                   = NULL;
+    data->flux_EQout_mm                  = NULL;
     data->infiltration_excess_m         = NULL;
     data->flux_from_deep_gw_to_chan_m   = NULL;
     data->flux_direct_runoff_m          = NULL;
@@ -3128,6 +3140,7 @@ extern void run_cfe(cfe_state_struct* cfe_ptr){
         &cfe_ptr->nash_surface_params,                  // struct containing Nash cascade model's parameters set by config file
         &cfe_ptr->et_struct,                            // Set to zero with initalize. Set by BMI (set_value) during run
         cfe_ptr->flux_Qout_m,                           // Set by CFE function
+        cfe_ptr->flux_EQout_mm,                              // Set by CFE function
         &cfe_ptr->vol_struct,
         cfe_ptr->time_step_size,
         cfe_ptr->surface_runoff_scheme
@@ -3244,19 +3257,37 @@ extern void print_cfe_flux_header() {
     printf("#    ,      hourly ,  infiltration excess,  direct ,lateral,  base,   total, storage, ice fraction, ice fraction \n");
     printf("Time [h],rainfall [mm], excess [mm],runoff [mm],flow [mm],flow [mm],discharge [mm],storage [mm],schaake [mm],xinan [-]\n");
 }
-extern void print_cfe_flux_at_timestep(cfe_state_struct* cfe_ptr) {
-  printf("%d, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf\n",
-         cfe_ptr->current_time_step,
-         cfe_ptr->timestep_rainfall_input_m*1000.0,
-         *cfe_ptr->infiltration_excess_m*1000.0,
-         *cfe_ptr->flux_direct_runoff_m*1000.0,
-         *cfe_ptr->flux_nash_lateral_runoff_m*1000.0,
-         *cfe_ptr->flux_from_deep_gw_to_chan_m*1000.0,
-         *cfe_ptr->flux_Qout_m*1000.0,
-         cfe_ptr->soil_reservoir.storage_m*1000.0,
-         cfe_ptr->soil_reservoir.ice_fraction_schaake*1000.0,
-         cfe_ptr->soil_reservoir.ice_fraction_xinanjiang);
+/*extern void print_cfe_flux_at_timestep(cfe_state_struct* cfe_ptr) {
+  //printf("%d, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf\n",
+  //       cfe_ptr->current_time_step,
+  //       cfe_ptr->timestep_rainfall_input_m*1000.0,
+  //       *cfe_ptr->infiltration_excess_m*1000.0,
+  //       *cfe_ptr->flux_direct_runoff_m*1000.0,
+  //       *cfe_ptr->flux_nash_lateral_runoff_m*1000.0,
+  //       *cfe_ptr->flux_from_deep_gw_to_chan_m*1000.0,
+  //       *cfe_ptr->flux_Qout_m*1000.0,
+  //       cfe_ptr->soil_reservoir.storage_m*1000.0,
+  //       cfe_ptr->soil_reservoir.ice_fraction_schaake*1000.0,
+  //       cfe_ptr->soil_reservoir.ice_fraction_xinanjiang);
+  // Save to CSV file
+  FILE *fp = fopen("../cfe_flux_output.csv", "a"); // Open in append mode
+  if (fp != NULL) {
+      fprintf(fp, "%lf, %lf, %lf, %lf, %lf, %lf, %lf\n",
+              cfe_ptr->timestep_rainfall_input_m*1000.0,
+              *cfe_ptr->infiltration_excess_m*1000.0,
+              *cfe_ptr->flux_direct_runoff_m*1000.0,
+              *cfe_ptr->flux_nash_lateral_runoff_m*1000.0,
+              *cfe_ptr->flux_from_deep_gw_to_chan_m*1000.0,
+              *cfe_ptr->flux_Qout_m*1000.0,
+              cfe_ptr->soil_reservoir.storage_m*1000.0);
+      fclose(fp);
+  } else {
+      fprintf(stderr, "Error opening file for writing.\n");
+  }	
 }
+*/
+
+
 
 extern void mass_balance_check(cfe_state_struct* cfe_ptr){
     //-----------------------------------------------------------
@@ -3298,80 +3329,124 @@ extern void mass_balance_check(cfe_state_struct* cfe_ptr){
 
     global_residual = cfe_ptr->vol_struct.volstart + cfe_ptr->vol_struct.volin -
                       cfe_ptr->vol_struct.volout - volend - cfe_ptr->vol_struct.vol_end_surface;
-    printf("========================= Simulation Summary ========================= \n");
-    printf("********************* GLOBAL MASS BALANCE ********************* \n");
-    printf(" Volume initial   = %8.4lf m\n",cfe_ptr->vol_struct.volstart);
-    printf(" Volume input     = %8.4lf m\n",cfe_ptr->vol_struct.volin);
-    printf(" Volume output    = %8.4lf m\n",cfe_ptr->vol_struct.volout);
-    printf(" Final volume     = %8.4lf m\n",volend);
-    printf(" Global residual  = %6.4e m\n",global_residual);
+    //printf("========================= Simulation Summary ========================= \n");
+    //printf("********************* GLOBAL MASS BALANCE ********************* \n");
+    //printf(" Volume initial   = %8.4lf m\n",cfe_ptr->vol_struct.volstart);
+    //printf(" Volume input     = %8.4lf m\n",cfe_ptr->vol_struct.volin);
+    //printf(" Volume output    = %8.4lf m\n",cfe_ptr->vol_struct.volout);
+    //printf(" Final volume     = %8.4lf m\n",volend);
+    //printf(" Global residual  = %6.4e m\n",global_residual);
     if(cfe_ptr->vol_struct.volin>0.0)
-      printf(" Global percent error = %6.4e percent of inputs\n",global_residual/cfe_ptr->vol_struct.volin*100.0);
+      //printf(" Global percent error = %6.4e percent of inputs\n",global_residual/cfe_ptr->vol_struct.volin*100.0);
+    ;
     else
-      printf(" Global pct. err: %6.4e percent of initial\n",global_residual/cfe_ptr->vol_struct.volstart*100.0);
+      //printf(" Global pct. err: %6.4e percent of initial\n",global_residual/cfe_ptr->vol_struct.volstart*100.0);
+    ;
 
     if(!is_fabs_less_than_epsilon(global_residual,1.0e-12))
-      printf("WARNING: GLOBAL MASS BALANCE CHECK FAILED\n");
-
+      //printf("WARNING: GLOBAL MASS BALANCE CHECK FAILED\n");
+    ;
     direct_residual = cfe_ptr->vol_struct.volin - cfe_ptr->vol_struct.vol_runoff - cfe_ptr->vol_struct.vol_infilt -
                       cfe_ptr->vol_struct.vol_et_from_rain;
     
-    printf("******************* PRECIPITATION MASS BALANCE *****************\n");
-    printf(" Volume input        = %8.4lf m\n",cfe_ptr->vol_struct.volin);
-    printf(" Infiltration Excess = %8.4lf m\n",cfe_ptr->vol_struct.vol_runoff);
-    printf(" Infiltration        = %8.4lf m\n",cfe_ptr->vol_struct.vol_infilt);
-    printf(" Vol_et_from_rain    = %8.4lf m\n",cfe_ptr->vol_struct.vol_et_from_rain);
-    printf(" Precip residual     = %6.4e m\n",direct_residual);  // should equal 0.0
+    //printf("******************* PRECIPITATION MASS BALANCE *****************\n");
+    //printf(" Volume input        = %8.4lf m\n",cfe_ptr->vol_struct.volin);
+    //printf(" Infiltration Excess = %8.4lf m\n",cfe_ptr->vol_struct.vol_runoff);
+    //printf(" Infiltration        = %8.4lf m\n",cfe_ptr->vol_struct.vol_infilt);
+    //printf(" Vol_et_from_rain    = %8.4lf m\n",cfe_ptr->vol_struct.vol_et_from_rain);
+    //printf(" Precip residual     = %6.4e m\n",direct_residual);  // should equal 0.0
     if(!is_fabs_less_than_epsilon(direct_residual,1.0e-12))
-      printf("WARNING: DIRECT RUNOFF PARTITIONING MASS BALANCE CHECK FAILED\n");
-
+      //printf("WARNING: DIRECT RUNOFF PARTITIONING MASS BALANCE CHECK FAILED\n");
+    ;
     giuh_residual = cfe_ptr->vol_struct.vol_runoff - cfe_ptr->vol_struct.vol_out_surface - cfe_ptr->vol_struct.vol_end_surface -
                     cfe_ptr->vol_struct.vol_runon_infilt;
-    printf("********************* SURFACE MASS BALANCE *********************\n");
-    printf(" Volume into surface         = %8.4lf m\n",cfe_ptr->vol_struct.vol_runoff);
-    printf(" Volume out surface          = %8.4lf m\n",cfe_ptr->vol_struct.vol_out_surface);
-    printf(" Volume end surface          = %8.4lf m\n",cfe_ptr->vol_struct.vol_end_surface);
-    printf(" Runon infiltration          = %8.4lf m\n",cfe_ptr->vol_struct.vol_runon_infilt);
-    printf(" Vol_et_from_retention_depth = %8.4lf m\n",cfe_ptr->vol_struct.vol_et_from_retention_depth);
-    printf(" Surface residual            = %6.4e m\n", giuh_residual);  // should equal zero
+    //printf("********************* SURFACE MASS BALANCE *********************\n");
+    //printf(" Volume into surface         = %8.4lf m\n",cfe_ptr->vol_struct.vol_runoff);
+    //printf(" Volume out surface          = %8.4lf m\n",cfe_ptr->vol_struct.vol_out_surface);
+    //printf(" Volume end surface          = %8.4lf m\n",cfe_ptr->vol_struct.vol_end_surface);
+    //printf(" Runon infiltration          = %8.4lf m\n",cfe_ptr->vol_struct.vol_runon_infilt);
+    //printf(" Vol_et_from_retention_depth = %8.4lf m\n",cfe_ptr->vol_struct.vol_et_from_retention_depth);
+    //printf(" Surface residual            = %6.4e m\n", giuh_residual);  // should equal zero
     if(!is_fabs_less_than_epsilon(giuh_residual,1.0e-12))
-      printf("WARNING: GIUH MASS BALANCE CHECK FAILED\n");
-
+      //printf("WARNING: GIUH MASS BALANCE CHECK FAILED\n");
+    ;
 
     soil_residual = cfe_ptr->vol_struct.vol_soil_start + cfe_ptr->vol_struct.vol_infilt + cfe_ptr->vol_struct.vol_runon_infilt -
                     cfe_ptr->vol_struct.vol_soil_to_lat_flow - vol_soil_end - cfe_ptr->vol_struct.vol_to_gw -
                     cfe_ptr->vol_struct.vol_et_from_soil;
 
-    printf("*********** SOIL WATER CONCEPTUAL RESERVOIR MASS BALANCE *******\n");
-    printf(" Initial soil vol     = %8.4lf m\n",cfe_ptr->vol_struct.vol_soil_start);
-    printf(" Volume into soil     = %8.4lf m\n",cfe_ptr->vol_struct.vol_infilt);
-    printf(" Volume soil2latflow  = %8.4lf m\n",cfe_ptr->vol_struct.vol_soil_to_lat_flow);
-    printf(" Volume soil to GW    = %8.4lf m\n",cfe_ptr->vol_struct.vol_soil_to_gw);
-    printf(" Final volume soil    = %8.4lf m\n",vol_soil_end);
-    printf(" Volume et from soil  = %8.4lf m\n",cfe_ptr->vol_struct.vol_et_from_soil);
-    printf(" Volume soil residual = %6.4e m\n",soil_residual);
+    //printf("*********** SOIL WATER CONCEPTUAL RESERVOIR MASS BALANCE *******\n");
+    //printf(" Initial soil vol     = %8.4lf m\n",cfe_ptr->vol_struct.vol_soil_start);
+    //printf(" Volume into soil     = %8.4lf m\n",cfe_ptr->vol_struct.vol_infilt);
+    //printf(" Volume soil2latflow  = %8.4lf m\n",cfe_ptr->vol_struct.vol_soil_to_lat_flow);
+    //printf(" Volume soil to GW    = %8.4lf m\n",cfe_ptr->vol_struct.vol_soil_to_gw);
+    //printf(" Final volume soil    = %8.4lf m\n",vol_soil_end);
+    //printf(" Volume et from soil  = %8.4lf m\n",cfe_ptr->vol_struct.vol_et_from_soil);
+    //printf(" Volume soil residual = %6.4e m\n",soil_residual);
     if(!is_fabs_less_than_epsilon(soil_residual,1.0e-12))
-      printf("WARNING: SOIL CONCEPTUAL RESERVOIR MASS BALANCE CHECK FAILED\n");
-
+      //printf("WARNING: SOIL CONCEPTUAL RESERVOIR MASS BALANCE CHECK FAILED\n");
+    ;
     nash_residual = cfe_ptr->vol_struct.vol_in_nash - cfe_ptr->vol_struct.vol_out_nash - vol_nash_subsurface_end;
-    printf("************* NASH CASCADE (SUBSURFACE) MASS BALANCE ***********\n");
-    printf(" Volume to Nash   = %8.4lf m\n",cfe_ptr->vol_struct.vol_in_nash);
-    printf(" Volume from Nash = %8.4lf m\n",cfe_ptr->vol_struct.vol_out_nash);
-    printf(" Final vol. Nash  = %8.4lf m\n",vol_nash_subsurface_end);
-    printf(" Nash casc resid. = %6.4e m\n",nash_residual);
+    //printf("************* NASH CASCADE (SUBSURFACE) MASS BALANCE ***********\n");
+    //printf(" Volume to Nash   = %8.4lf m\n",cfe_ptr->vol_struct.vol_in_nash);
+    //printf(" Volume from Nash = %8.4lf m\n",cfe_ptr->vol_struct.vol_out_nash);
+    //printf(" Final vol. Nash  = %8.4lf m\n",vol_nash_subsurface_end);
+    //printf(" Nash casc resid. = %6.4e m\n",nash_residual);
     if(!is_fabs_less_than_epsilon(nash_residual,1.0e-12))
-      printf("WARNING: NASH CASCADE CONCEPTUAL RESERVOIR MASS BALANCE CHECK FAILED\n");
+      //printf("WARNING: NASH CASCADE CONCEPTUAL RESERVOIR MASS BALANCE CHECK FAILED\n");
+     ;
 
 
     gw_residual = cfe_ptr->vol_struct.vol_in_gw_start + cfe_ptr->vol_struct.vol_to_gw - cfe_ptr->vol_struct.vol_from_gw - vol_in_gw_end;
-    printf("********** GROUNDWATER CONCEPTUAL RESERVOIR MASS BALANCE *******\n");
-    printf(" Initial GW storage = %8.4lf m\n",cfe_ptr->vol_struct.vol_in_gw_start);
-    printf(" Volume to GW       = %8.4lf m\n",cfe_ptr->vol_struct.vol_to_gw);
-    printf(" Volume from GW     = %8.4lf m\n",cfe_ptr->vol_struct.vol_from_gw);
-    printf(" Final GW storage   = %8.4lf m\n",vol_in_gw_end);
-    printf(" GW residual        = %6.4e m\n",gw_residual);
+    //printf("********** GROUNDWATER CONCEPTUAL RESERVOIR MASS BALANCE *******\n");
+    //printf(" Initial GW storage = %8.4lf m\n",cfe_ptr->vol_struct.vol_in_gw_start);
+    //printf(" Volume to GW       = %8.4lf m\n",cfe_ptr->vol_struct.vol_to_gw);
+    //printf(" Volume from GW     = %8.4lf m\n",cfe_ptr->vol_struct.vol_from_gw);
+    //printf(" Final GW storage   = %8.4lf m\n",vol_in_gw_end);
+    //printf(" GW residual        = %6.4e m\n",gw_residual);
     if(!is_fabs_less_than_epsilon(gw_residual,1.0e-12))
-      fprintf(stderr,"WARNING: GROUNDWATER CONCEPTUAL RESERVOIR MASS BALANCE CHECK FAILED\n");
+      //fprintf(stderr,"WARNING: GROUNDWATER CONCEPTUAL RESERVOIR MASS BALANCE CHECK FAILED\n");
+    ;
+    // Save to CSV file
+    /*FILE *fp = fopen("../cfe_sample_1_output.csv", "a"); // Open in append mode
+    if (fp != NULL) {
+        fprintf(fp, "%8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %6.4e, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %6.4e, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %6.4e, %8.4lf, %8.4lf, %8.4lf, %6.4e, %8.4lf, %8.4lf, %8.4lf, %8.4lf, %6.4e\n",
+                cfe_ptr->vol_struct.volstart,
+                cfe_ptr->vol_struct.volin,
+                cfe_ptr->vol_struct.volout,
+                volend,
+                global_residual,
+                cfe_ptr->vol_struct.volin,
+                cfe_ptr->vol_struct.vol_runoff,
+                cfe_ptr->vol_struct.vol_infilt,
+                cfe_ptr->vol_struct.vol_et_from_rain,
+                direct_residual,
+                cfe_ptr->vol_struct.vol_runoff,
+                cfe_ptr->vol_struct.vol_out_surface,
+                cfe_ptr->vol_struct.vol_end_surface,
+                cfe_ptr->vol_struct.vol_runon_infilt,
+                cfe_ptr->vol_struct.vol_et_from_retention_depth,
+                giuh_residual,
+                cfe_ptr->vol_struct.vol_soil_start,
+                cfe_ptr->vol_struct.vol_infilt,
+                cfe_ptr->vol_struct.vol_soil_to_lat_flow,
+                cfe_ptr->vol_struct.vol_soil_to_gw,
+                vol_soil_end,
+                cfe_ptr->vol_struct.vol_et_from_soil,
+                soil_residual,
+                cfe_ptr->vol_struct.vol_in_nash,
+                cfe_ptr->vol_struct.vol_out_nash,
+                vol_nash_subsurface_end,
+                nash_residual,
+                cfe_ptr->vol_struct.vol_in_gw_start,
+                cfe_ptr->vol_struct.vol_to_gw,
+                cfe_ptr->vol_struct.vol_from_gw,
+                vol_in_gw_end,
+                gw_residual);
+        fclose(fp);
+    } else {
+        fprintf(stderr, "Error opening file for writing.\n");
+    }*/
 }
 
 /**************************************************************************/
