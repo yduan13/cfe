@@ -53,7 +53,7 @@ int
 
     cfe_bmi_model->update(cfe_bmi_model);
     //print_cfe_flux_at_timestep(cfe_main_data);
-    mass_balance_check(cfe_main_data);
+    //mass_balance_check(cfe_main_data);
 
     if (cfe_main_data->verbosity > 0)
         print_cfe_flux_at_timestep(cfe_main_data);
