@@ -220,7 +220,7 @@ int
   }
 
     cfe_bmi_model->update_until(cfe_bmi_model, (i+1)*model_time_step_size);      // Update model 2
-    mass_balance_check(cfe1);
+    //mass_balance_check(cfe1);
     //print_cfe_flux_at_timestep(cfe1);
 
    // Save to CSV file
