@@ -341,7 +341,7 @@ double df(double Edischarge, double Edischarge_prev) {
 
 // Newton-Raphson Solver
 //void solve_Q(double Edischarge_prev, double Erunon) {
-    double Edischarge = fmax(4, Erunon); // Starting guess
+    double Edischarge = fmax(8, Erunon); // Starting guess
     //double Edischarge = 4.000;
     for (int Ei = 0; Ei < MAX_ITER; Ei++) {
         double f_val  = fdis(Edischarge, Edischarge_prev, Erunon);
@@ -781,4 +781,5 @@ extern int is_fabs_less_than_epsilon(double a,double epsilon)  // returns true i
   if(fabs(a)<epsilon) return(TRUE);
   else                return(FALSE);
 }
+
 
