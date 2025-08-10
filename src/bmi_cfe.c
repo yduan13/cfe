@@ -291,6 +291,7 @@ static const char *output_var_locations[OUTPUT_VAR_NAME_COUNT] = {
         "node",
         "node",
         "node",
+        "node",
       	"node",
 	"node",
 	"node",
