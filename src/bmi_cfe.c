@@ -198,6 +198,7 @@ static const char *output_var_names[OUTPUT_VAR_NAME_COUNT] = {
         "DEEP_GW_TO_CHANNEL_FLUX",
 	"SOIL_TO_GW_FLUX",
         "Q_OUT",
+        "EQ_OUT",
         "POTENTIAL_ET",
         "ACTUAL_ET",
         "GW_STORAGE",
@@ -208,6 +209,7 @@ static const char *output_var_names[OUTPUT_VAR_NAME_COUNT] = {
 };
 
 static const char *output_var_types[OUTPUT_VAR_NAME_COUNT] = {
+        "double",
         "double",
         "double",
         "double",
