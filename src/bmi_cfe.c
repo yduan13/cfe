@@ -272,6 +272,7 @@ static const int output_var_grids[OUTPUT_VAR_NAME_COUNT] = {
         0,
         0,
         0,
+        0,
       	0,
 	0,
 	0,
