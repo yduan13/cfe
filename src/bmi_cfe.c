@@ -20,7 +20,7 @@
 #define CFE_DEBUG 0
 
 #define INPUT_VAR_NAME_COUNT 5
-#define OUTPUT_VAR_NAME_COUNT 15
+#define OUTPUT_VAR_NAME_COUNT 16
 
 #define STATE_VAR_NAME_COUNT 95   // must match var_info array size
 
