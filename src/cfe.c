@@ -371,7 +371,7 @@ double df(double Edischarge, double Edischarge_prev) {
     *EQout_mm_ptr = Edischarge;
 
    // Save to CSV file
-   FILE *fpD = fopen("../cfe_Qout_mm_per_timestep.csv", "a"); // Open in append mode
+  /* FILE *fpD = fopen("../cfe_Qout_mm_per_timestep.csv", "a"); // Open in append mode
     if (fpD != NULL) {
         fprintf(fpD, "%8.4lf\n",
                 Edischarge);
@@ -379,7 +379,7 @@ double df(double Edischarge, double Edischarge_prev) {
     } else {   
         fprintf(stderr, "Error opening file for writing.\n");
     }	
-   
+  */
 //}
 
 
@@ -781,6 +781,7 @@ extern int is_fabs_less_than_epsilon(double a,double epsilon)  // returns true i
   if(fabs(a)<epsilon) return(TRUE);
   else                return(FALSE);
 }
+
 
 
 
