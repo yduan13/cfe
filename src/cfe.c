@@ -317,7 +317,7 @@ extern void cfe(
 double ExpET           = evap_struct->actual_et_m_per_timestep*1000.0;
 double Erunon          = timestep_rainfall_input_m*1000.0 - ExpET;
 //double Erunon          = timestep_rainfall_input_m*1000.0;
-double Edischarge_prev = *EQout_mm_ptr;
+double Edischarge_prev = *EQout_mm_ptr*1000.0;
 
 if (EQout_mm_ptr == NULL) {
     fprintf(stderr, "EQout_mm_ptr is NULL!\n");
@@ -368,7 +368,7 @@ double df(double Edischarge, double Edischarge_prev) {
     }
     
     //printf("Warning: did not converge. Returning Q = %.6f\n", Q);
-    *EQout_mm_ptr = Edischarge;
+    *EQout_mm_ptr = Edischarge/1000.0;
 
    // Save to CSV file
   /* FILE *fpD = fopen("../cfe_Qout_mm_per_timestep.csv", "a"); // Open in append mode
@@ -781,6 +781,7 @@ extern int is_fabs_less_than_epsilon(double a,double epsilon)  // returns true i
   if(fabs(a)<epsilon) return(TRUE);
   else                return(FALSE);
 }
+
 
 
 
