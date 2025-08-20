@@ -1390,7 +1390,7 @@ static int Initialize (Bmi *self, const char *file)
     cfe_bmi_data_ptr->flux_Qout_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_Qout_m = 0.0;
     cfe_bmi_data_ptr->flux_EQout_mm = malloc(sizeof(double));
-    *cfe_bmi_data_ptr->flux_EQout_mm = 0.018207;
+    *cfe_bmi_data_ptr->flux_EQout_mm = 0.000018207;
     cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = 0.0;
     cfe_bmi_data_ptr->flux_direct_runoff_m = malloc(sizeof(double));
