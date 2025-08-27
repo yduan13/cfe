@@ -164,7 +164,7 @@ Variable var_info[] = {
 	{ 83, "flux_perc_m",                    "double*", 1 },
 	{ 84, "flux_lat_m",                     "double*", 1 },
 	{ 85, "flux_Qout_m",                    "double*", 1 },
-    { 86, "flux_EQout_mm",                   "double*", 1 },
+    { 86, "flux_EQout",                   "double*", 1 },
 	{ 87, "verbosity",                      "int",     1 },
 	//---------------------------------------
 	// infiltration_excess_runoff_params_struct vars
