@@ -32,7 +32,7 @@ extern void cfe(
         struct nash_cascade_parameters *nash_surface_params,
         struct evapotranspiration_structure *evap_struct,
         double *Qout_m_ptr,
-        double *EQout_mm_ptr,
+        double *EQout_m_ptr,
         struct massbal *massbal_struct,
         double time_step_size,
         int    surface_runoff_scheme
@@ -781,6 +781,7 @@ extern int is_fabs_less_than_epsilon(double a,double epsilon)  // returns true i
   if(fabs(a)<epsilon) return(TRUE);
   else                return(FALSE);
 }
+
 
 
 
