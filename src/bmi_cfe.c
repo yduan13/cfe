@@ -1644,8 +1644,8 @@ static int Finalize (Bmi *self)
             free(model->runoff_queue_m_per_timestep);
         if( model->flux_Qout_m != NULL )
             free(model->flux_Qout_m);
-        if( model->flux_EQout_mm != NULL )
-            free(model->flux_EQout_mm);
+        if( model->flux_EQout_m != NULL )
+            free(model->flux_EQout_m);
 
         /* xinanjiang_dev: changing name to the more general "direct runoff"
         if( model->flux_Schaake_output_runoff_m != NULL )
