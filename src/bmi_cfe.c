@@ -2547,7 +2547,7 @@ static int Get_state_var_ptrs (Bmi *self, void *ptr_list[])
     ptr_list[82] = state->flux_perc_m;
     ptr_list[83] = state->flux_lat_m;
     ptr_list[84] = state->flux_Qout_m;
-    ptr_list[85] = state->flux_EQout_mm;
+    ptr_list[85] = state->flux_EQout_m;
     ptr_list[86] = &(state->verbosity);
     //---------------------------------------
     // infiltration_excess_params_struct vars
@@ -3049,7 +3049,7 @@ cfe_state_struct *new_bmi_cfe(void)
     data->nash_storage_subsurface       = NULL;
     data->runoff_queue_m_per_timestep   = NULL;
     data->flux_Qout_m                   = NULL;
-    data->flux_EQout_mm                  = NULL;
+    data->flux_EQout_m                  = NULL;
     data->infiltration_excess_m         = NULL;
     data->flux_from_deep_gw_to_chan_m   = NULL;
     data->flux_direct_runoff_m          = NULL;
@@ -3146,7 +3146,7 @@ extern void run_cfe(cfe_state_struct* cfe_ptr){
         &cfe_ptr->nash_surface_params,                  // struct containing Nash cascade model's parameters set by config file
         &cfe_ptr->et_struct,                            // Set to zero with initalize. Set by BMI (set_value) during run
         cfe_ptr->flux_Qout_m,                           // Set by CFE function
-        cfe_ptr->flux_EQout_mm,                              // Set by CFE function
+        cfe_ptr->flux_EQout_m,                              // Set by CFE function
         &cfe_ptr->vol_struct,
         cfe_ptr->time_step_size,
         cfe_ptr->surface_runoff_scheme
