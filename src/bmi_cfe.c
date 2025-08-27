@@ -2041,7 +2041,7 @@ static int Get_value_ptr (Bmi *self, const char *name, void **dest)
     }
 
     if (strcmp (name, "EQ_OUT") == 0) {
-        *dest = ((cfe_state_struct *)(self->data))->flux_EQout_mm;
+        *dest = ((cfe_state_struct *)(self->data))->flux_EQout_m;
         return BMI_SUCCESS;
     }
 
