@@ -33,8 +33,8 @@ static const char *param_var_names[PARAM_VAR_NAME_COUNT] = {
     "satpsi","wltsmc","alpha_fc","refkdt",
     "a_Xinanjiang_inflection_point_parameter","b_Xinanjiang_shape_parameter","x_Xinanjiang_shape_parameter",
     "Kinf_nash_surface",
-    "retention_depth_nash_surface"，
-    "Ea"，
+    "retention_depth_nash_surface",
+    "Ea",
     "Eb" 
 };
 
