@@ -200,8 +200,11 @@ extern void cfe(
 	    double *EQout_m_ptr,
         struct massbal *massbal_struct,
         double time_step_size,
-        int surface_runoff_scheme
+        int surface_runoff_scheme,
+        double Ea,
+        double Eb
     );
 
 #endif //CFE_CFE_H
+
 
