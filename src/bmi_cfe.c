@@ -540,7 +540,9 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
 
     // Default value
     model->NWM_soil_params.refkdt = 3.0;
-
+    model->Ea = 56.7039;
+    model->Eb = 0.5693;
+	
     // Also keep track of Nash stuff and properly set at the end of reading the config file
     model->N_nash_subsurface = 2;
     char* nash_storage_subsurface_string_val;
@@ -568,7 +570,16 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
 #if CFE_DEBUG >= 1
         printf("Config Value - Param: '%s' | Value: '%s' | Units: '%s'\n", param_key, param_value, param_units);
 #endif
-
+        if (strcmp(param_key, "Ea") == 0) {
+		    model->Ea = strtod(param_value, NULL);
+			continue;
+		}
+		
+        if (strcmp(param_key, "Eb") == 0) {
+		    model->Eb = strtod(param_value, NULL);
+			continue;
+		}		
+		
         if (strcmp(param_key, "forcing_file") == 0) {
             model->forcing_file = strdup(param_value);
             is_forcing_file_set = TRUE;
