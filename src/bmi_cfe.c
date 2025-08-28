@@ -25,7 +25,7 @@
 #define STATE_VAR_NAME_COUNT 95   // must match var_info array size
 
 
-#define PARAM_VAR_NAME_COUNT 18
+#define PARAM_VAR_NAME_COUNT 20
 // NOTE: If you update the params, also update the unit test in ../test/main_unit_test_bmi.c
 static const char *param_var_names[PARAM_VAR_NAME_COUNT] = {
     "maxsmc", "satdk", "slope", "b", "Klf",
@@ -33,7 +33,9 @@ static const char *param_var_names[PARAM_VAR_NAME_COUNT] = {
     "satpsi","wltsmc","alpha_fc","refkdt",
     "a_Xinanjiang_inflection_point_parameter","b_Xinanjiang_shape_parameter","x_Xinanjiang_shape_parameter",
     "Kinf_nash_surface",
-    "retention_depth_nash_surface"
+    "retention_depth_nash_surface"，
+    "Ea"，
+    "Eb" 
 };
 
 static const char *param_var_types[PARAM_VAR_NAME_COUNT] = {
@@ -41,7 +43,7 @@ static const char *param_var_types[PARAM_VAR_NAME_COUNT] = {
     "double", "double", "double", "double",
     "double", "double", "double", "double",
     "double","double","double", "double",
-    "double"
+    "double","double","double"
 };
 //----------------------------------------------
 // Put variable info into a struct to simplify
