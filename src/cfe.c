@@ -36,6 +36,8 @@ extern void cfe(
         struct massbal *massbal_struct,
         double time_step_size,
         int    surface_runoff_scheme
+        double Ea,
+        double Eb
     ){                      // #######################################################################
 // CFE STATE SPACE FUNCTION // #######################################################################
 
@@ -325,8 +327,8 @@ if (EQout_m_ptr == NULL) {
 }
 
 // Parameters
-double Ea = 56.7039;
-double Eb = 0.5693;
+// double Ea = 56.7039;
+// double Eb = 0.5693;
 
 double fdis(double Edischarge, double Edischarge_prev, double Erunon) {
     return Ea * Eb * pow(Edischarge, Eb) - Ea * Eb * Edischarge_prev * pow(Edischarge, Eb - 1) + Edischarge - Erunon;
@@ -781,6 +783,7 @@ extern int is_fabs_less_than_epsilon(double a,double epsilon)  // returns true i
   if(fabs(a)<epsilon) return(TRUE);
   else                return(FALSE);
 }
+
 
 
 
