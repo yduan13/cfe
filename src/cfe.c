@@ -35,7 +35,7 @@ extern void cfe(
         double *EQout_m_ptr,
         struct massbal *massbal_struct,
         double time_step_size,
-        int    surface_runoff_scheme
+        int    surface_runoff_scheme,
         double Ea,
         double Eb
     ){                      // #######################################################################
@@ -783,6 +783,7 @@ extern int is_fabs_less_than_epsilon(double a,double epsilon)  // returns true i
   if(fabs(a)<epsilon) return(TRUE);
   else                return(FALSE);
 }
+
 
 
 
