@@ -502,7 +502,9 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
     int is_K_lf_set                = FALSE;
     int is_num_timesteps_set       = FALSE;
     int is_verbosity_set           = FALSE;
-
+    int is_Ea_set                  = FALSE;
+    int is_Eb_set                  = FALSE;
+	
     /* xinanjiang_dev*/
     int is_infiltration_excess_method_set              = FALSE;
     int is_a_Xinanjiang_inflection_point_parameter_set = FALSE;
