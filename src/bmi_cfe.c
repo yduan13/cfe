@@ -572,11 +572,13 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
 #endif
         if (strcmp(param_key, "Ea") == 0) {
 		    model->Ea = strtod(param_value, NULL);
+			printf("Ea successfully set to: %f\n", model->Ea);
 			continue;
 		}
 		
         if (strcmp(param_key, "Eb") == 0) {
 		    model->Eb = strtod(param_value, NULL);
+			printf("Eb successfully set to: %f\n", model->Eb);
 			continue;
 		}		
 
