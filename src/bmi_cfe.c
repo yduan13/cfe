@@ -186,7 +186,7 @@ Variable var_info[] = {
 	{ 95, "nwm_ponded_depth",                        "double", 1},
     { 96, "Ea",                              "double",  1},
     { 97, "Eb",                              "double",  1},
-    { 98, "flux_EQout_m2",                   "double",  1}
+    { 98, "flux_EQout_m2",                   "double",  1},
 };
 
 int i = 0;
