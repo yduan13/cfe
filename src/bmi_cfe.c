@@ -502,7 +502,6 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
     int is_K_lf_set                = FALSE;
     int is_num_timesteps_set       = FALSE;
     int is_verbosity_set           = FALSE;
-	int is_flux_EQout_m_set        = FALSE;
 	
     /* xinanjiang_dev*/
     int is_infiltration_excess_method_set              = FALSE;
@@ -543,7 +542,7 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
     model->NWM_soil_params.refkdt = 3.0;
     model->Ea = 56.7039;
     model->Eb = 0.5693;
-	
+	model->flux_EQout_m2 = 0.000018207;
     // Also keep track of Nash stuff and properly set at the end of reading the config file
     model->N_nash_subsurface = 2;
     char* nash_storage_subsurface_string_val;
@@ -583,7 +582,6 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
 
 		if (strcmp(param_key, "flux_EQout_m2") == 0) {
             model->flux_EQout_m2  = strtod(param_value, NULL);
-			is_flux_EQout_m_set  = TRUE;
 			continue;
 		}
 		
@@ -1410,13 +1408,7 @@ static int Initialize (Bmi *self, const char *file)
     cfe_bmi_data_ptr->flux_Qout_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_Qout_m = 0.0;
     cfe_bmi_data_ptr->flux_EQout_m = malloc(sizeof(double));
-    
-	if (is_flux_EQout_m_set == TRUE) {
-	    *cfe_bmi_data_ptr->flux_EQout_m = model->flux_EQout_m2;
-        } else {
-	    *cfe_bmi_data_ptr->flux_EQout_m = 0.000018207;
-	}
-		
+	*cfe_bmi_data_ptr->flux_EQout_m = model->flux_EQout_m2;		
     cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = 0.0;
     cfe_bmi_data_ptr->flux_direct_runoff_m = malloc(sizeof(double));
