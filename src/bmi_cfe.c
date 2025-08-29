@@ -502,6 +502,7 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
     int is_K_lf_set                = FALSE;
     int is_num_timesteps_set       = FALSE;
     int is_verbosity_set           = FALSE;
+	int is_flux_EQout_m_set        = FALSE;
 	
     /* xinanjiang_dev*/
     int is_infiltration_excess_method_set              = FALSE;
@@ -579,6 +580,12 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
 		    model->Eb = strtod(param_value, NULL);
 			continue;
 		}		
+
+		if (strcmp(param_key, "flux_EQout_m") == 0) {
+            model->flux_EQout_m  = strtod(param_value, NULL);
+			is_flux_EQout_m_set  = TRUE;
+			continue;
+		}
 		
         if (strcmp(param_key, "forcing_file") == 0) {
             model->forcing_file = strdup(param_value);
@@ -1403,7 +1410,13 @@ static int Initialize (Bmi *self, const char *file)
     cfe_bmi_data_ptr->flux_Qout_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_Qout_m = 0.0;
     cfe_bmi_data_ptr->flux_EQout_m = malloc(sizeof(double));
-    *cfe_bmi_data_ptr->flux_EQout_m = 0.000018207;
+    
+	if (is_flux_EQout_m_set == TRUE) {
+	    *cfe_bmi_data_ptr->flux_EQout_m = model->flux_EQout_m;
+        } else {
+	    *cfe_bmi_data_ptr->flux_EQout_m = 0.000018207;
+	}
+		
     cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = 0.0;
     cfe_bmi_data_ptr->flux_direct_runoff_m = malloc(sizeof(double));
