@@ -22,7 +22,7 @@
 #define INPUT_VAR_NAME_COUNT 5
 #define OUTPUT_VAR_NAME_COUNT 16
 
-#define STATE_VAR_NAME_COUNT 95   // must match var_info array size
+#define STATE_VAR_NAME_COUNT 97   // must match var_info array size
 
 
 #define PARAM_VAR_NAME_COUNT 20
@@ -184,7 +184,9 @@ Variable var_info[] = {
         { 94, "max_rootzone_layer",                      "int", 1},
 	//--------------------------------------------
 	{ 95, "nwm_ponded_depth",                        "double", 1},
-
+    { 96, "Ea",                              "double",  1},
+    { 97, "Eb",                              "double",  1},
+    { 98, "flux_EQout_m2",                   "double",  1}
 };
 
 int i = 0;
