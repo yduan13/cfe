@@ -581,8 +581,8 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
 			continue;
 		}		
 
-		if (strcmp(param_key, "flux_EQout_m") == 0) {
-            model->flux_EQout_m  = strtod(param_value, NULL);
+		if (strcmp(param_key, "flux_EQout_m2") == 0) {
+            model->flux_EQout_m2  = strtod(param_value, NULL);
 			is_flux_EQout_m_set  = TRUE;
 			continue;
 		}
@@ -1412,7 +1412,7 @@ static int Initialize (Bmi *self, const char *file)
     cfe_bmi_data_ptr->flux_EQout_m = malloc(sizeof(double));
     
 	if (is_flux_EQout_m_set == TRUE) {
-	    *cfe_bmi_data_ptr->flux_EQout_m = model->flux_EQout_m;
+	    *cfe_bmi_data_ptr->flux_EQout_m = model->flux_EQout_m2;
         } else {
 	    *cfe_bmi_data_ptr->flux_EQout_m = 0.000018207;
 	}
