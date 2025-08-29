@@ -543,6 +543,8 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
     model->Ea = 56.7039;
     model->Eb = 0.5693;
 	model->flux_EQout_m2 = 0.000018207;
+	double flux_EQout_mT;
+	flux_EQout_mT  = model->flux_EQout_m2;
     // Also keep track of Nash stuff and properly set at the end of reading the config file
     model->N_nash_subsurface = 2;
     char* nash_storage_subsurface_string_val;
@@ -582,6 +584,7 @@ int read_init_config_cfe(const char* config_file, cfe_state_struct* model)
 
 		if (strcmp(param_key, "flux_EQout_m2") == 0) {
             model->flux_EQout_m2  = strtod(param_value, NULL);
+			flux_EQout_mT         = model->flux_EQout_m2;
 			continue;
 		}
 		
@@ -1408,7 +1411,7 @@ static int Initialize (Bmi *self, const char *file)
     cfe_bmi_data_ptr->flux_Qout_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_Qout_m = 0.0;
     cfe_bmi_data_ptr->flux_EQout_m = malloc(sizeof(double));
-	*cfe_bmi_data_ptr->flux_EQout_m = model->flux_EQout_m2;		
+	*cfe_bmi_data_ptr->flux_EQout_m = flux_EQout_mT;		
     cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = malloc(sizeof(double));
     *cfe_bmi_data_ptr->flux_from_deep_gw_to_chan_m = 0.0;
     cfe_bmi_data_ptr->flux_direct_runoff_m = malloc(sizeof(double));
