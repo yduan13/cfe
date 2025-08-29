@@ -25,7 +25,7 @@
 #define STATE_VAR_NAME_COUNT 97   // must match var_info array size
 
 
-#define PARAM_VAR_NAME_COUNT 20
+#define PARAM_VAR_NAME_COUNT 21
 // NOTE: If you update the params, also update the unit test in ../test/main_unit_test_bmi.c
 static const char *param_var_names[PARAM_VAR_NAME_COUNT] = {
     "maxsmc", "satdk", "slope", "b", "Klf",
@@ -35,7 +35,8 @@ static const char *param_var_names[PARAM_VAR_NAME_COUNT] = {
     "Kinf_nash_surface",
     "retention_depth_nash_surface",
     "Ea",
-    "Eb" 
+    "Eb",
+    "flux_EQout_m2"
 };
 
 static const char *param_var_types[PARAM_VAR_NAME_COUNT] = {
@@ -43,7 +44,7 @@ static const char *param_var_types[PARAM_VAR_NAME_COUNT] = {
     "double", "double", "double", "double",
     "double", "double", "double", "double",
     "double","double","double", "double",
-    "double","double","double"
+    "double","double","double","double"
 };
 //----------------------------------------------
 // Put variable info into a struct to simplify
@@ -3189,7 +3190,8 @@ extern void run_cfe(cfe_state_struct* cfe_ptr){
         cfe_ptr->time_step_size,
         cfe_ptr->surface_runoff_scheme,
 		cfe_ptr->Ea,
-		cfe_ptr->Eb
+		cfe_ptr->Eb,
+		cfe_ptr-> flux_EQout_m2
         );
 }
 
