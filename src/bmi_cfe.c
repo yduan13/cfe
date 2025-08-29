@@ -1902,6 +1902,22 @@ static int Get_value_ptr (Bmi *self, const char *name, void **dest)
 {
 
     /*********** Calibration Params Hacked ************/
+    if (strcmp (name, "Ea") == 0) {
+        cfe_state_struct *cfe_ptr = (cfe_state_struct *) self->data;
+        *dest = (void*)&cfe_ptr->Ea;
+        return BMI_SUCCESS;
+    }
+
+    if (strcmp (name, "Eb") == 0) {
+        cfe_state_struct *cfe_ptr = (cfe_state_struct *) self->data;
+        *dest = (void*)&cfe_ptr->Eb;
+        return BMI_SUCCESS;
+    }
+    if (strcmp (name, "flux_EQout_m2") == 0) {
+        cfe_state_struct *cfe_ptr = (cfe_state_struct *) self->data;
+        *dest = (void*)&cfe_ptr->flux_EQout_m2;
+        return BMI_SUCCESS;
+    }	
     if (strcmp (name, "maxsmc") == 0) {
         cfe_state_struct *cfe_ptr;
         cfe_ptr = (cfe_state_struct *) self->data;
