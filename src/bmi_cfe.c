@@ -3190,8 +3190,7 @@ extern void run_cfe(cfe_state_struct* cfe_ptr){
         cfe_ptr->time_step_size,
         cfe_ptr->surface_runoff_scheme,
 		cfe_ptr->Ea,
-		cfe_ptr->Eb,
-		cfe_ptr-> flux_EQout_m2
+		cfe_ptr->Eb
         );
 }
 
