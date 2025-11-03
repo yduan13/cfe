@@ -22,7 +22,7 @@
 #define INPUT_VAR_NAME_COUNT 5
 #define OUTPUT_VAR_NAME_COUNT 16
 
-#define STATE_VAR_NAME_COUNT 97   // must match var_info array size
+#define STATE_VAR_NAME_COUNT 99   // must match var_info array size
 
 
 #define PARAM_VAR_NAME_COUNT 21
